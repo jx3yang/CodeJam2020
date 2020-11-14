@@ -12,7 +12,7 @@ from api.text_rank import rank as text_rank
 from api.text_rank import tokenize, tokenize_corpus
 
 app = Flask(__name__)
-PORT = 8000
+PORT = 5000
 app.config['SECRET_KEY'] = 'secret'
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'uploads')
 cors = CORS(app)
