@@ -3,6 +3,7 @@ import os
 
 import numpy as np
 import pandas as pd
+from PIL import Image
 from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 import time
@@ -11,6 +12,7 @@ from api.image_rank import compute_hash
 from api.image_rank import rank as image_rank
 from api.text_rank import rank as text_rank
 from api.text_rank import tokenize, tokenize_corpus
+from api.segmentation import Segmenter, segment_clothes
 
 app = Flask(__name__)
 PORT = 5000
@@ -40,20 +42,59 @@ all_data['int_hash'] = all_data['image_hash'].apply(hash_to_int)
 corpus = list(all_data['title'])
 bm25 = tokenize_corpus(corpus)
 
+segmenter = Segmenter()
+
 @app.route('/')
 def ping():
     return { 'success': True }
 
+def get_save_file_path(filename):
+    return os.path.join(app.config['UPLOAD_FOLDER'], filename)
+
+def upload_image():
+    image = request.files['file']
+    filename = f'{int(time.time())}-{image.filename}'
+    image.save(get_save_file_path(filename))
+    return filename
+
+def get_file_path(filename):
+    return f'http://localhost:{PORT}/dir/{filename}'
+
 @app.route('/upload', methods=['POST'])
 def upload():
     if request.files:
-        image = request.files['file']
-        filename = f'{int(time.time())}-{image.filename}'
-        image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        filename = upload_image()
         return {
             'success': True,
-            'imagePath': f'http://localhost:{PORT}/dir/{filename}'
+            'imagePath': get_file_path(filename)
         }
+    return {
+        'success': False
+    }
+
+@app.route('/segment', methods=['POST'])
+def segment():
+    if request.files:
+        filename = upload_image()
+        image_path = get_file_path(filename)
+        segments = segment_clothes(segmenter, image_path)
+
+        def get_segment_file(name, image):
+            im = Image.fromarray(image)
+            ts = int(time.time())
+            fn = f'{ts}-{name}.jpg'
+            im.save(get_save_file_path(fn))
+            return get_file_path(fn)
+
+        return {
+            'success': True,
+            'imagePath': get_file_path(filename),
+            'segments': [
+                { 'name': clothe_segment['name'], 'imageUrl': get_segment_file(clothe_segment['name'], clothe_segment['image']) }
+                for clothe_segment in segments
+            ]
+        }
+
     return {
         'success': False
     }

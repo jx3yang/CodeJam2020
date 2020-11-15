@@ -42,6 +42,12 @@
             component: './TextSearch',
           },
           {
+            path: '/clothes_segmentation',
+            name: 'clothes_segmentation',
+            icon: 'smile',
+            component: './ClothesSegmentation',
+          },
+          {
             path: '/admin',
             name: 'admin',
             icon: 'crown',

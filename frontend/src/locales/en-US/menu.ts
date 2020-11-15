@@ -51,4 +51,5 @@ export default {
   'menu.editor.koni': 'Koni Editor',
   'menu.image_search': 'Image Search',
   'menu.text_search': 'Text Search',
+  'menu.clothes_segmentation': 'Clothes Segmentation',
 };

@@ -1,5 +1,5 @@
 """
-Code from https://colab.research.google.com/drive/1Tc9vCcajKGlmnyUwfkQIjOHJdMay9EUB?usp=sharing
+Most code from https://colab.research.google.com/drive/1Tc9vCcajKGlmnyUwfkQIjOHJdMay9EUB?usp=sharing
 """
 
 import base64
@@ -10,10 +10,13 @@ import imgaug as ia
 import numpy as np
 import pandas as pd
 import requests
+from PIL import Image
+
+from .utils import get_image_from_url
 
 ID_TO_CLASSES = {
-    1: 'shirt',
-    9: 'skirt'
+    1: 'Shirt',
+    9: 'Skirt'
 }
 
 class ImageByteEncoder:
@@ -85,3 +88,25 @@ class Segmenter:
         req_df = pd.DataFrame({'Image_url': [url]})
         req_json = req_df.to_json(orient='split')
         return self._predict(req_json)
+
+def segment_clothes(segmenter, image_url):
+    image = get_image_from_url(image_url)
+    img = np.array(image)
+    segmap, id_to_class = segmenter.predict_on_image(image)
+    segmap = np.array(segmap)
+    print(id_to_class)
+    _ids = [_id for _id in ID_TO_CLASSES if str(_id) in id_to_class]
+
+    def extract(_id):
+        seg = np.array(segmap)
+        seg[seg != _id] = 0
+        seg[seg == _id] = 1
+        portion = np.array(img)
+        for z in range(3):
+            portion[:,:,z] = np.multiply(portion[:,:,z], seg)
+        portion[portion == 0] = 255
+        return portion
+
+    return [
+        { 'name': ID_TO_CLASSES[_id], 'image': extract(_id) } for _id in _ids
+    ]
