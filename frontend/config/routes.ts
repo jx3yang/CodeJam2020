@@ -30,16 +30,16 @@
             component: './Welcome',
           },
           {
-            path: '/image_search',
-            name: 'image_search',
-            icon: 'smile',
-            component: './ImageSearch',
-          },
-          {
             path: '/text_search',
             name: 'text_search',
             icon: 'smile',
             component: './TextSearch',
+          },
+          {
+            path: '/image_search',
+            name: 'image_search',
+            icon: 'smile',
+            component: './ImageSearch',
           },
           {
             path: '/clothes_segmentation',
