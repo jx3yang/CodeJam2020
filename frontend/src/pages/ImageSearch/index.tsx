@@ -8,27 +8,31 @@ import { imageSearch } from '@/services/image';
 const ImageSearch: React.FC<{}> = () => {
   const [imageUrl, setImageUrl] = useState<string>('');
   const [results, setResults] = useState<Result[]>([]);
+  const [resultsLoading, setResultsLoading] = useState<boolean>(false);
 
   const onChange = (url: string) => {
     setImageUrl(url);
     setResults([]);
+    setResultsLoading(true);
     imageSearch({ imagePath: url }).then(res => {
-      if (res.success === true)
+      if (res.success === true) {
         setResults(res.data);
+        setResultsLoading(false);
+      }
     });
   }
 
   return (
     <PageContainer>
-      <Card>
+      <Card bordered={false}>
         <ImageUpload
           currentImageUrl={imageUrl}
           onChange={onChange}
         />
       </Card>
-      <Card>
+      <Card bordered={false}>
         {results.length > 0 &&
-          <ResultsDisplay results={results} />
+          <ResultsDisplay results={results} loading={resultsLoading} />
         }
       </Card>
     </PageContainer>

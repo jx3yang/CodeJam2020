@@ -24,7 +24,7 @@ const ImageUpload: React.FC<ImageUploadProps> = (props) => {
   return (
     <div style={{textAlign: 'center'}}>
       {currentImageUrl
-        ? <Image src={currentImageUrl} width={250} />
+        ? <Image src={currentImageUrl} width={200} />
         : <h3>Upload Image To Search For Similar Products!</h3>
       }
         <Upload

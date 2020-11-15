@@ -36,6 +36,12 @@
             component: './ImageSearch',
           },
           {
+            path: '/text_search',
+            name: 'text_search',
+            icon: 'smile',
+            component: './TextSearch',
+          },
+          {
             path: '/admin',
             name: 'admin',
             icon: 'crown',
