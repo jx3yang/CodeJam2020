@@ -10,7 +10,6 @@ import imgaug as ia
 import numpy as np
 import pandas as pd
 import requests
-from PIL import Image
 
 ID_TO_CLASSES = {
     1: 'shirt',
@@ -31,7 +30,7 @@ class ImageByteEncoder:
         Returns:
             str -- image encoded as a string
         """
-        img_bytes = io.BytesIO()
+        img_bytes = BytesIO()
         img.save(img_bytes, format='PNG')
         img_bytes = img_bytes.getvalue()
         img_bytes = base64.b64encode(img_bytes).decode('utf8')
@@ -48,7 +47,7 @@ class ImageByteEncoder:
         """
         img_bytes = bytes(img_str, encoding='utf8')
         img_bytes = base64.b64decode(img_bytes)
-        img = Image.open(io.BytesIO(img_bytes))
+        img = Image.open(BytesIO(img_bytes))
         return img
 
 
@@ -62,7 +61,8 @@ class Segmenter:
         response = requests.post(
             url=self.inference_url,
             data=req_json,
-            headers={"Content-Type": "application/json"})
+            headers={ "Content-Type": "application/json" }
+        )
         response = json.loads(response.text)[0]
 
         # Decode the seg info
@@ -85,8 +85,3 @@ class Segmenter:
         req_df = pd.DataFrame({'Image_url': [url]})
         req_json = req_df.to_json(orient='split')
         return self._predict(req_json)
-
-def get_image_from_url(img_url):
-    return Image.open(
-        BytesIO(requests.get(img_url).content)
-    )
