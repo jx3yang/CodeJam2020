@@ -17,10 +17,11 @@ export interface Result {
 interface ResultsDisplayProps {
   results: Result[];
   loading: boolean;
+  title?: string;
 }
 
 const ResultsDisplay: React.FC<ResultsDisplayProps> = (props) => {
-  const { results, loading } = props;
+  const { results, loading, title } = props;
 
   const cardList = results && (
     <List<Result>
@@ -60,7 +61,7 @@ const ResultsDisplay: React.FC<ResultsDisplayProps> = (props) => {
 
   return (
     <div className={styles.coverCardList}>
-      {results && <h2>Search Results</h2>}
+      {results && <h2>{title ? title : 'Search Results'}</h2>}
       <div className={styles.cardList}>{cardList}</div>
     </div>
   )

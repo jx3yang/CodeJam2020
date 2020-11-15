@@ -39,6 +39,9 @@ all_data = all_data[pd.notna(all_data['image_url'])]
 all_data['image_hash'] = all_data['image_hash'].apply(eval_hash)
 all_data['int_hash'] = all_data['image_hash'].apply(hash_to_int)
 
+shuffled = all_data.sample(frac=1)
+nums_per_page = 50
+
 corpus = list(all_data['title'])
 bm25 = tokenize_corpus(corpus)
 
@@ -150,6 +153,27 @@ def text_search():
     return {
         'success': True,
         'data': top_data
+    }
+
+@app.route('/products')
+def get_products():
+    page = request.args.get('page', default = 1, type = int)
+    product_slice = shuffled.iloc[(page-1) * nums_per_page:page * nums_per_page]
+    return {
+        'success': True,
+        'data': [
+            {
+                'url': url,
+                'title': title,
+                'price': '' if pd.isna(price) else price,
+                'imageUrl': '' if pd.isna(image_url) else image_url,
+                'company': company
+            }
+            for url, title, price, image_url, company
+            in zip(product_slice['url'], product_slice['title'], product_slice['price'], product_slice['image_url'], product_slice['company'])
+        ],
+        'total': len(shuffled),
+        'size': nums_per_page
     }
 
 if __name__ == '__main__':
