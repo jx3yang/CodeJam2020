@@ -18,7 +18,8 @@ app.config['SECRET_KEY'] = 'secret'
 app.config['UPLOAD_FOLDER'] = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'uploads')
 cors = CORS(app)
 
-top_n = 10
+top_n = 5
+distance_threshold = 15
 
 def eval_hash(img_hash):
     if isinstance(img_hash, float):
@@ -40,7 +41,7 @@ bm25 = tokenize_corpus(corpus)
 
 @app.route('/')
 def ping():
-    return json.dumps({ 'success': True })
+    return { 'success': True }
 
 @app.route('/upload', methods=['POST'])
 def upload():
@@ -48,13 +49,13 @@ def upload():
         image = request.files['file']
         filename = f'{int(time.time())}-{image.filename}'
         image.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        return json.dumps({
+        return {
             'success': True,
             'imagePath': f'http://localhost:{PORT}/dir/{filename}'
-        })
-    return json.dumps({
+        }
+    return {
         'success': False
-    })
+    }
 
 @app.route('/dir/<path:path>', methods=['GET'])
 def serve(path):
@@ -66,7 +67,8 @@ def image_search():
     img_hash = compute_hash(data.get('imagePath'))
     ranks = image_rank(all_data['image_hash'], img_hash)
     top_results = {
-        hash_to_int(x['image_hash']): x['distance'] for x in sorted(ranks, key=lambda x: x['distance'])[:top_n]
+        hash_to_int(x['image_hash']): x['distance']
+        for x in sorted(ranks, key=lambda x: x['distance']) if x['distance'] <= distance_threshold
     }
 
     top_data = [
@@ -74,17 +76,17 @@ def image_search():
             'url': row['url'],
             'title': row['title'],
             'imageUrl': row['image_url'],
-            'price': row['price'],
+            'price': '' if pd.isna(row['price']) else row['price'],
             'company': row['company'],
             'distance': top_results.get(row['int_hash'])
         }
         for _, row in all_data[all_data.int_hash.isin(top_results)].iterrows()
     ]
 
-    return json.dumps({
+    return {
         'success': True,
         'data': top_data
-    })
+    }
 
 @app.route('/text_search', methods=['POST'])
 def text_search():
@@ -96,17 +98,17 @@ def text_search():
         {
             'url': row['url'],
             'title': row['title'],
-            'price': row['price'],
+            'price': '' if pd.isna(row['price']) else row['price'],
             'imageUrl': row['image_url'],
             'company': row['company']
         }
         for _, row in all_data[all_data.title.isin(top_results)].iterrows()
     ]
 
-    return json.dumps({
+    return {
         'success': True,
         'data': top_data
-    })
+    }
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=PORT)
