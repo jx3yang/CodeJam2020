@@ -3,4 +3,5 @@ __pycache__/
 *.png
 *.jpeg
 *.jpg
+*.webp
 local/

@@ -58,7 +58,7 @@ const Segmentation: React.FC<SegmentationProps> = (props) => {
       {segments && segments.length > 0 &&
         <>
           <h2>Segments</h2>
-          {segments.map((segment, index) =>
+          {segments.filter(segment => (segmentResults.get(segment.imageUrl) || []).length > 0).map((segment, index) =>
             <>
               <Space key={index}>
                 <Image src={segment.imageUrl} width={200}/>

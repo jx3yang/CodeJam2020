@@ -16,7 +16,10 @@ from .utils import get_image_from_url
 
 ID_TO_CLASSES = {
     1: 'Shirt',
-    9: 'Skirt'
+    3: 'Sweater',
+    9: 'Skirt',
+    10: 'Coat',
+    11: 'Dress',
 }
 
 class ImageByteEncoder:
@@ -94,7 +97,6 @@ def segment_clothes(segmenter, image_url):
     img = np.array(image)
     segmap, id_to_class = segmenter.predict_on_image(image)
     segmap = np.array(segmap)
-    print(id_to_class)
     _ids = [_id for _id in ID_TO_CLASSES if str(_id) in id_to_class]
 
     def extract(_id):
