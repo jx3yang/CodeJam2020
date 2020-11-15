@@ -1,5 +1,5 @@
 """
-Most code from https://colab.research.google.com/drive/1Tc9vCcajKGlmnyUwfkQIjOHJdMay9EUB?usp=sharing
+Using the Encoder and Segmenter from https://colab.research.google.com/drive/1Tc9vCcajKGlmnyUwfkQIjOHJdMay9EUB?usp=sharing
 """
 
 import base64
