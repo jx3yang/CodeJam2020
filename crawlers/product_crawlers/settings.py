@@ -16,4 +16,5 @@ RETRY_HTTP_CODES = [301]
 
 AMAZON_OUT_FILE = 'output/amazon.csv'
 EBAY_OUT_FILE = 'output/ebay.csv'
+ETSY_OUT_FILE = 'output/etsy.csv'
 IMAGE_HASH_FILE = 'output/image_hash.csv'

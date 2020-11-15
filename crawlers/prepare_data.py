@@ -1,5 +1,5 @@
 import pandas as pd
-from product_crawlers.settings import AMAZON_OUT_FILE, EBAY_OUT_FILE, IMAGE_HASH_FILE
+from product_crawlers.settings import AMAZON_OUT_FILE, EBAY_OUT_FILE, ETSY_OUT_FILE, IMAGE_HASH_FILE
 
 def clean_price(x, offset):
     if x and not pd.isna(x):
@@ -20,6 +20,11 @@ def get_ebay_df():
     df['price'] = df['price'].apply(lambda x: clean_price(x, 1))
     return df
 
+def get_etsy_df():
+    df = pd.read_csv(ETSY_OUT_FILE)[['title', 'url', 'image_url', 'price']]
+    df['price'] = df['price'].apply(lambda x: clean_price(x, 0))
+    return df
+
 def get_image_hash_dict():
     df = pd.read_csv(IMAGE_HASH_FILE)
     return {
@@ -27,12 +32,14 @@ def get_image_hash_dict():
     }
 
 if __name__ == '__main__':
-    df_amazon, df_ebay, hash_dict = get_amazon_df(), get_ebay_df(), get_image_hash_dict()
+    df_amazon, df_ebay, df_etsy, hash_dict = get_amazon_df(), get_ebay_df(), get_etsy_df(), get_image_hash_dict()
     
     df_amazon['image_hash'] = df_amazon['image_url'].apply(lambda x: hash_dict.get(x))
     df_ebay['image_hash'] = df_ebay['image_url'].apply(lambda x: hash_dict.get(x))
+    df_etsy['image_hash'] = df_etsy['image_url'].apply(lambda x: hash_dict.get(x))
 
     df_amazon['company'] = 'Amazon'
     df_ebay['company'] = 'Ebay'
+    df_etsy['company'] = 'Etsy'
 
-    pd.concat([df_amazon, df_ebay]).to_csv('output/final.csv', index=False)
+    pd.concat([df_amazon, df_ebay, df_etsy]).to_csv('output/final.csv', index=False)
