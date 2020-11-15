@@ -33,6 +33,7 @@ def hash_to_int(img_hash_array):
     return result
 
 all_data = pd.read_csv('final.csv')
+all_data = all_data[pd.notna(all_data['image_url'])]
 all_data['image_hash'] = all_data['image_hash'].apply(eval_hash)
 all_data['int_hash'] = all_data['image_hash'].apply(hash_to_int)
 
@@ -75,7 +76,7 @@ def image_search():
         {
             'url': row['url'],
             'title': row['title'],
-            'imageUrl': row['image_url'],
+            'imageUrl': '' if pd.isna(row['image_url']) else row['image_url'],
             'price': '' if pd.isna(row['price']) else row['price'],
             'company': row['company'],
             'distance': top_results.get(row['int_hash'])
@@ -99,7 +100,7 @@ def text_search():
             'url': row['url'],
             'title': row['title'],
             'price': '' if pd.isna(row['price']) else row['price'],
-            'imageUrl': row['image_url'],
+            'imageUrl': '' if pd.isna(row['image_url']) else row['image_url'],
             'company': row['company']
         }
         for _, row in all_data[all_data.title.isin(top_results)].iterrows()
