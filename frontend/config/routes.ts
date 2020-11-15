@@ -30,6 +30,12 @@
             component: './Welcome',
           },
           {
+            path: '/image_search',
+            name: 'image_search',
+            icon: 'smile',
+            component: './ImageSearch',
+          },
+          {
             path: '/admin',
             name: 'admin',
             icon: 'crown',
@@ -44,12 +50,6 @@
                 authority: ['admin'],
               },
             ],
-          },
-          {
-            name: 'list.table-list',
-            icon: 'table',
-            path: '/list',
-            component: './ListTableList',
           },
           {
             component: './404',

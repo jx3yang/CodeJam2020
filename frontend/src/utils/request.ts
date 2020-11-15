@@ -23,9 +23,6 @@ const codeMessage = {
   504: '网关超时。',
 };
 
-/**
- * 异常处理程序
- */
 const errorHandler = (error: { response: Response }): Response => {
   const { response } = error;
   if (response && response.status) {
@@ -45,12 +42,14 @@ const errorHandler = (error: { response: Response }): Response => {
   return response;
 };
 
-/**
- * 配置request请求时的默认参数
- */
-const request = extend({
-  errorHandler, // 默认错误处理
-  credentials: 'include', // 默认请求是否带上cookie
+export const SERVER_URL = 'http://localhost:5000';
+
+export const request = extend({
+  errorHandler,
+  credentials: 'include'
 });
 
-export default request;
+export const serviceRequest = extend({
+  errorHandler,
+  prefix: SERVER_URL,
+});
