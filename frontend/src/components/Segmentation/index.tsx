@@ -23,7 +23,6 @@ const Segmentation: React.FC<SegmentationProps> = (props) => {
   const onUpload = (info: UploadChangeParam<UploadFile<any>>) => {
     const fileInfo = info.fileList[0];
     if (fileInfo.status === 'done') {
-      console.log(fileInfo)
       const newSegments = fileInfo.response.segments as Segment[];
       onChange(fileInfo.response.imagePath);
       setSegments(newSegments);
